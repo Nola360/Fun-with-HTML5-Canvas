@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+
+<body>
+  <canvas id="draw" width="1600" height="1600"></canvas>
+  <script>
+    //Grab the canvas
+    const canvas = document.querySelector('#draw');
+
+    //Get The 2d context to draw on, context is something you can draw on
+    const ctx = canvas.getContext('2d');
+
+    //Size canvas to be exact size of window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    //Create base settings
+
+    ctx.strokeStyle = '#BADA55';
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 25;
+
+    //Blend Mode
+
+    ctx.globalCompositeOperation = 'multiply';
+
+    //Creating a flag to tell if drawing is taking place of not
+    let isDrawing = false;
+
+    //CReate starting and ending points for drawing
+    let lastX = 0;
+    let lastY = 0;
+    // let hue = 255;
+    let hue = 0;
+    //
+    let direction = true;
+
+    //Create a function called draw that is active when the mouse moves on the canvas
+
+    function draw(e) {
+      if (!isDrawing) return;
+      //this will stop the function from running when mouse is not down
+      console.log(e)
+      //Controls the hue, saturation and lightness
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      // Increases the size based on the hue color number size
+      // ctx.lineWidth = hue;
+      //start a path
+      ctx.beginPath();
+      //Start from
+      ctx.moveTo(lastX, lastY);
+      //Go to
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+      lastX = e.offsetX;
+      lastY = e.offsetY;
+      //Adds multiple colors to hue
+      hue++;
+      // resets hue color
+      if (hue >= 360) {
+        hue = 0;
+      }
+      //This will reverse the line width when it reaches 100
+      if (ctx.lineWidth >= 25 || ctx.lineWidth <= 10) {
+        direction = !direction;
+      }
+      //Depending on what the direcrtion is, increment or decrement the line width
+      if (direction) {
+        ctx.lineWidth++;
+      } else {
+        ctx.lineWidth--;
+      }
+
+
+      //Incrementa line with infinitely 
+      ctx.linewidth++;
+    }
+
+    // Allows mouse movement to start at any point on the canvas when clicked
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+    //Create event that triggers & records mouse movement
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseout', () =>
+      isDrawing = false);
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
+
+</body>
+
+</html>
